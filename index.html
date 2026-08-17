@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <style>
   /* 1. Clear out Notion's background layer */
   html, body {
@@ -14,7 +18,7 @@
 
   /* 2. Main Widget Box */
   .clock-widget {
-    background-color: #f4f4f4;
+    background-color: #f4f4f4; 
     border-radius: 8px;
     padding: 16px;
     box-sizing: border-box;
@@ -159,9 +163,10 @@
     text-shadow: 0 1px 1px rgba(255,255,255,0.5);
   }
 </style>
+</head>
+<body>
 
 <div id="widget" class="clock-widget">
-  <!-- Floating Customization Controls -->
   <button class="settings-btn" onclick="togglePanel()">⚙️</button>
   <div id="pickerPanel" class="color-picker-panel">
     <!-- Row 1: Grays, Cream, and Soft Warm Neutrals -->
@@ -205,32 +210,32 @@
     <div class="color-dot" style="background: #a3b19b;" title="Muted Olive Pastel" onclick="changeBg('#a3b19b')"></div>
   </div>
 
-  <!-- Center white circle wrapper holding all elements inside -->
   <div class="clock-circle">
-    <!-- The structured box holding the time numbers and badge together -->
     <div class="time-box">
       <p id="clock" class="clock-text">00:00</p>
       <span id="ampm" class="ampm-badge">AM</span>
     </div>
-    <!-- Displays the full day and abbreviated date -->
     <p id="date" class="date-text">SUNDAY, JAN 1</p>
   </div>
 </div>
 
 <script>
-  // Load saved background color on initial render
-  const savedBg = localStorage.getItem('notionClockBg');
-  if (savedBg) {
-    document.getElementById('widget').style.backgroundColor = savedBg;
+  // 1. Check if a color is present in the URL hash (e.g. yourpage.html#ffb7b2)
+  function applyUrlColor() {
+    const hash = window.location.hash;
+    if (hash && hash.length === 7) { // Valid 6-digit hex code with #
+      document.getElementById('widget').style.backgroundColor = hash;
+    }
   }
 
   function togglePanel() {
     document.getElementById('pickerPanel').classList.toggle('active');
   }
 
+  // 2. Update the color and push it to the URL hash link dynamically
   function changeBg(color) {
     document.getElementById('widget').style.backgroundColor = color;
-    localStorage.setItem('notionClockBg', color); // Save selection
+    window.location.hash = color; // Saves it to the frame URL inside Notion
     document.getElementById('pickerPanel').classList.remove('active');
   }
 
@@ -255,6 +260,11 @@
     document.getElementById('date').textContent = `${weekdayString}, ${monthDayString}`;
   }
 
+  // Run on startup
+  applyUrlColor();
   updateClock();
-  setInterval(updateClock, 60000); // Check every minute instead of every second
+  setInterval(updateClock, 1000);
 </script>
+
+</body>
+</html>

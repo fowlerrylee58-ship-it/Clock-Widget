@@ -1,0 +1,256 @@
+<style> 
+/* 1. Clear out Notion's background layer */ 
+html, body { 
+  background: transparent !important; 
+  margin: 0; 
+  padding: 0; 
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 
+
+/* 2. Main Widget Box */ 
+.clock-widget { 
+  background-color: #f4f4f4; 
+  border-radius: 8px; 
+  padding: 16px; 
+  box-sizing: border-box; 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  position: relative; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+  transition: background-color 0.3s ease; 
+  
+  border: 1px solid rgba(255, 255, 255, 0.7); 
+  box-shadow: 
+    0 0 12px 2px rgba(255, 255, 255, 0.6), 
+    0 10px 30px -10px rgba(0, 0, 0, 0.08),  
+    inset 0 0 0 4px rgba(255, 255, 255, 0.4); 
+} 
+
+/* 3. Interactive Customizer Button & Extended Mega Grid Menu */
+.settings-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  z-index: 10;
+  transition: transform 0.2s ease;
+}
+.settings-btn:hover {
+  transform: scale(1.05);
+}
+.color-picker-panel {
+  position: absolute;
+  top: 48px;
+  right: 14px;
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 10px;
+  /* Grid updated to support 5 rows of 6 options */
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: all 0.2s ease;
+}
+.color-picker-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.08);
+  transition: transform 0.1s ease;
+}
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+/* 4. The White Circle Container */
+.clock-circle {
+  width: 270px; 
+  height: 270px; 
+  border: 5px solid #ffffff; 
+  border-radius: 50%; 
+  background-color: transparent;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  text-align: center;
+  box-sizing: border-box;
+  padding: 28px; 
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.04));
+}
+
+/* 5. Structured time box locked to a solid white background */
+.time-box {
+  background-color: #ffffff !important; 
+  border: 1px solid #dcdcdc; 
+  border-radius: 8px; 
+  padding: 8px 16px; 
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  gap: 8px; 
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); 
+}
+
+/* 6. Style the clock numbers */
+.clock-text {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #222222;
+  margin: 0;
+  letter-spacing: -0.02em; 
+  line-height: 1; 
+}
+
+/* 7. Finely tuned, narrower, and smaller AM/PM badge */
+.ampm-badge {
+  font-size: 1.3rem; 
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #444444; 
+  padding: 2px 5px; 
+  border-radius: 5px; 
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center; 
+  line-height: 1;
+}
+
+/* 8. Refined and styled date text */
+.date-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #777777; 
+  margin-top: 12px; 
+  margin-bottom: 0;
+  text-transform: uppercase; 
+  letter-spacing: 0.08em; 
+}
+</style> 
+
+<div id="widget" class="clock-widget"> 
+  <!-- Floating Customization Controls -->
+  <button class="settings-btn" onclick="togglePanel()">⚙️</button>
+  <div id="pickerPanel" class="color-picker-panel">
+    <!-- Row 1: Grays, Cream, and Soft Warm Neutrals -->
+    <div class="color-dot" style="background: #f4f4f4;" title="Default Gray" onclick="changeBg('#f4f4f4')"></div>
+    <div class="color-dot" style="background: #ffffff;" title="Pure White" onclick="changeBg('#ffffff')"></div>
+    <div class="color-dot" style="background: #faf3f0;" title="Soft Alabaster" onclick="changeBg('#faf3f0')"></div>
+    <div class="color-dot" style="background: #fdf0ed;" title="Soft Cream" onclick="changeBg('#fdf0ed')"></div>
+    <div class="color-dot" style="background: #fff8e7;" title="Chiffon Pearl" onclick="changeBg('#fff8e7')"></div>
+    <div class="color-dot" style="background: #fff9e6;" title="Champagne Pastel" onclick="changeBg('#fff9e6')"></div>
+    
+    <!-- Row 2: Sweet Pastel Pinks, Roses, and Warm Orange-Peaches -->
+    <div class="color-dot" style="background: #ffb7b2;" title="Pastel Rose" onclick="changeBg('#ffb7b2')"></div>
+    <div class="color-dot" style="background: #ffe5ec;" title="Pastel Blush" onclick="changeBg('#ffe5ec')"></div>
+    <div class="color-dot" style="background: #ffcad4;" title="Cotton Candy" onclick="changeBg('#ffcad4')"></div>
+    <div class="color-dot" style="background: #ffdac1;" title="Pastel Peach" onclick="changeBg('#ffdac1')"></div>
+    <div class="color-dot" style="background: #ffe5d9;" title="Apricot Cream" onclick="changeBg('#ffe5d9')"></div>
+    <div class="color-dot" style="background: #fff3b0;" title="Pastel Yellow" onclick="changeBg('#fff3b0')"></div>
+    
+    <!-- Row 3: Fresh Pastel Greens, Mints, and Sage Tones -->
+    <div class="color-dot" style="background: #e2f0cb;" title="Pastel Sage" onclick="changeBg('#e2f0cb')"></div>
+    <div class="color-dot" style="background: #ccd5ae;" title="Pastel Eucalyptus" onclick="changeBg('#ccd5ae')"></div>
+    <div class="color-dot" style="background: #e8f5e9;" title="Pale Honeydew" onclick="changeBg('#e8f5e9')"></div>
+    <div class="color-dot" style="background: #b5ead7;" title="Pastel Mint" onclick="changeBg('#b5ead7')"></div>
+    <div class="color-dot" style="background: #d8f3dc;" title="Pastel Pistachio" onclick="changeBg('#d8f3dc')"></div>
+    <div class="color-dot" style="background: #e0f2f1;" title="Pale Teal" onclick="changeBg('#e0f2f1')"></div>
+
+    <!-- Row 4: Serene Sky Blues, Ocean Seafoams, Lilacs, and Lavenders -->
+    <div class="color-dot" style="background: #caf0f8;" title="Pastel Robin Egg" onclick="changeBg('#caf0f8')"></div>
+    <div class="color-dot" style="background: #d6e2e9;" title="Pastel Sky Blue" onclick="changeBg('#d6e2e9')"></div>
+    <div class="color-dot" style="background: #a8dadc;" title="Pastel Seafoam" onclick="changeBg('#a8dadc')"></div>
+    <div class="color-dot" style="background: #f0f3ff;" title="Pastel Cornflower" onclick="changeBg('#f0f3ff')"></div>
+    <div class="color-dot" style="background: #c7ceea;" title="Pastel Periwinkle" onclick="changeBg('#c7ceea')"></div>
+    <div class="color-dot" style="background: #e8dff5;" title="Pastel Lilac" onclick="changeBg('#e8dff5')"></div>
+
+    <!-- Row 5: BRAND NEW Moody Dark Pastels -->
+    <div class="color-dot" style="background: #6d6a75;" title="Dark Muted Lavender" onclick="changeBg('#6d6a75')"></div>
+    <div class="color-dot" style="background: #7a8b99;" title="Dark Slate Pastel" onclick="changeBg('#7a8b99')"></div>
+    <div class="color-dot" style="background: #8fa89b;" title="Dark Sage Pastel" onclick="changeBg('#8fa89b')"></div>
+    <div class="color-dot" style="background: #b5838d;" title="Dark Dusty Rose" onclick="changeBg('#b5838d')"></div>
+    <div class="color-dot" style="background: #e0b1cb;" title="Dark Orchid Pastel" onclick="changeBg('#e0b1cb')"></div>
+    <div class="color-dot" style="background: #a3b19b;" title="Muted Olive Pastel" onclick="changeBg('#a3b19b')"></div>
+  </div>
+
+  <!-- Center white circle wrapper holding all elements inside -->
+  <div class="clock-circle">
+    <!-- The structured box holding the time numbers and badge together -->
+    <div class="time-box">
+      <p id="clock" class="clock-text">00:00:00</p> 
+      <span id="ampm" class="ampm-badge">AM</span>
+    </div>
+    <!-- Displays the full day and abbreviated date -->
+    <p id="date" class="date-text">SUNDAY, JAN 1</p> 
+  </div>
+</div>
+
+<script>
+function togglePanel() {
+  document.getElementById('pickerPanel').classList.toggle('active');
+}
+
+function changeBg(color) {
+  document.getElementById('widget').style.backgroundColor = color;
+  document.getElementById('pickerPanel').classList.remove('active');
+}
+
+function updateClock() {
+  const now = new Date();
+  
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+  hours = hours % 12;
+  hours = hours ? hours : 12; 
+  hours = String(hours).padStart(2, '0'); 
+  
+  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+  document.getElementById('ampm').textContent = ampm;
+
+  const weekdayOptions = { weekday: 'long' };
+  const monthDayOptions = { month: 'short', day: 'numeric' };
+  
+  const weekdayString = now.toLocaleDateString(undefined, weekdayOptions);
+  const monthDayString = now.toLocaleDateString(undefined, monthDayOptions);
+  
+  document.getElementById('date').textContent = `${weekdayString}, ${monthDayString}`;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>

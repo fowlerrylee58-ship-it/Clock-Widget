@@ -51,20 +51,16 @@ html, body {
   font-size: 1rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   z-index: 10;
-  
-  /* Made hidden by default with a transition effect */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Force gear button visible on widget hover */
 .clock-widget:hover .settings-btn {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Ensure gear button stays visible while the color panel is explicitly active */
 .clock-widget.panel-open .settings-btn {
   opacity: 1;
   pointer-events: auto;
@@ -224,7 +220,7 @@ html, body {
   <div class="clock-circle">
     <!-- The structured box holding the time numbers and badge together -->
     <div class="time-box">
-      <p id="clock" class="clock-text">00:00:00</p> 
+      <p id="clock" class="clock-text">12:00:00</p> 
       <span id="ampm" class="ampm-badge">AM</span>
     </div>
     <!-- Displays the full day and abbreviated date -->
@@ -236,9 +232,7 @@ html, body {
 function togglePanel() {
   const panel = document.getElementById('pickerPanel');
   const widget = document.getElementById('widget');
-  
   panel.classList.toggle('active');
-  // Tracks state so gear button won't disappear mid-selection if cursor wanders out
   widget.classList.toggle('panel-open');
 }
 
@@ -263,8 +257,10 @@ function updateClock() {
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
   
+  // Clean AM/PM logic
   const ampm = hours >= 12 ? 'PM' : 'AM';
   
+  // FIXED MATH: Corrects 0 hours to 12 for clean 12-hour format display
   hours = hours % 12;
   hours = hours ? hours : 12; 
   hours = String(hours).padStart(2, '0'); 
@@ -281,3 +277,7 @@ function updateClock() {
   document.getElementById('date').textContent = `${weekdayString}, ${monthDayString}`;
 }
 
+loadSavedColor();
+updateClock();
+setInterval(updateClock, 1000);
+</script>

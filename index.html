@@ -253,28 +253,33 @@ function loadSavedColor() {
 function updateClock() {
   const now = new Date();
   
-  // Bulletproof time extraction strings matching your 12-hour AM/PM system
-  const timeString12h = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  // Format the time text securely (e.g. "03:45:12")
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
   
-  // Split time (e.g., "03:44:12") from AM/PM signature (e.g., "AM")
-  const parts = timeString12h.split(' ');
-  const timeNumbers = parts[0];
-  const ampmText = parts[1];
+  // Clean AM/PM text setup
+  const ampm = hours >= 12 ? 'PM' : 'AM';
   
-  document.getElementById('clock').textContent = timeNumbers;
-  document.getElementById('ampm').textContent = ampmText;
+  // Clean 12-hour numerical conversions
+  hours = hours % 12;
+  hours = hours ? hours : 12; 
+  hours = String(hours).padStart(2, '0'); 
+  
+  // Push results safely to HTML blocks
+  document.getElementById('clock').textContent = hours + ':' + minutes + ':' + seconds;
+  document.getElementById('ampm').textContent = ampm;
 
-  // Render Date string format
+  // Format the Date typography correctly
   const weekdayOptions = { weekday: 'long' };
   const monthDayOptions = { month: 'short', day: 'numeric' };
   
   const weekdayString = now.toLocaleDateString(undefined, weekdayOptions);
   const monthDayString = now.toLocaleDateString(undefined, monthDayOptions);
   
-  document.getElementById('date').textContent = `${weekdayString}, ${monthDayString}`;
+  document.getElementById('date').textContent = weekdayString + ', ' + monthDayString;
 }
 
+// Boot operations
 loadSavedColor();
 updateClock();
-setInterval(updateClock, 1000);
-</script>

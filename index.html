@@ -253,21 +253,18 @@ function loadSavedColor() {
 function updateClock() {
   const now = new Date();
   
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
+  // Bulletproof time extraction strings matching your 12-hour AM/PM system
+  const timeString12h = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
   
-  // Clean AM/PM logic
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  // Split time (e.g., "03:44:12") from AM/PM signature (e.g., "AM")
+  const parts = timeString12h.split(' ');
+  const timeNumbers = parts[0];
+  const ampmText = parts[1];
   
-  // FIXED MATH: Corrects 0 hours to 12 for clean 12-hour format display
-  hours = hours % 12;
-  hours = hours ? hours : 12; 
-  hours = String(hours).padStart(2, '0'); 
-  
-  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-  document.getElementById('ampm').textContent = ampm;
+  document.getElementById('clock').textContent = timeNumbers;
+  document.getElementById('ampm').textContent = ampmText;
 
+  // Render Date string format
   const weekdayOptions = { weekday: 'long' };
   const monthDayOptions = { month: 'short', day: 'numeric' };
   

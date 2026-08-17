@@ -51,8 +51,25 @@ html, body {
   font-size: 1rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   z-index: 10;
-  transition: transform 0.2s ease;
+  
+  /* Made hidden by default with a transition effect */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
+/* Force gear button visible on widget hover */
+.clock-widget:hover .settings-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Ensure gear button stays visible while the color panel is explicitly active */
+.clock-widget.panel-open .settings-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .settings-btn:hover {
   transform: scale(1.05);
 }
@@ -64,7 +81,6 @@ html, body {
   border: 1px solid #dcdcdc;
   border-radius: 8px;
   padding: 10px;
-  /* Grid updated to support 5 rows of 6 options */
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
@@ -195,7 +211,7 @@ html, body {
     <div class="color-dot" style="background: #c7ceea;" title="Pastel Periwinkle" onclick="changeBg('#c7ceea')"></div>
     <div class="color-dot" style="background: #e8dff5;" title="Pastel Lilac" onclick="changeBg('#e8dff5')"></div>
 
-    <!-- Row 5: BRAND NEW Moody Dark Pastels -->
+    <!-- Row 5: Moody Dark Pastels -->
     <div class="color-dot" style="background: #6d6a75;" title="Dark Muted Lavender" onclick="changeBg('#6d6a75')"></div>
     <div class="color-dot" style="background: #7a8b99;" title="Dark Slate Pastel" onclick="changeBg('#7a8b99')"></div>
     <div class="color-dot" style="background: #8fa89b;" title="Dark Sage Pastel" onclick="changeBg('#8fa89b')"></div>
@@ -218,12 +234,26 @@ html, body {
 
 <script>
 function togglePanel() {
-  document.getElementById('pickerPanel').classList.toggle('active');
+  const panel = document.getElementById('pickerPanel');
+  const widget = document.getElementById('widget');
+  
+  panel.classList.toggle('active');
+  // Tracks state so gear button won't disappear mid-selection if cursor wanders out
+  widget.classList.toggle('panel-open');
 }
 
 function changeBg(color) {
   document.getElementById('widget').style.backgroundColor = color;
   document.getElementById('pickerPanel').classList.remove('active');
+  document.getElementById('widget').classList.remove('panel-open');
+  localStorage.setItem('widgetBgColor', color);
+}
+
+function loadSavedColor() {
+  const savedColor = localStorage.getItem('widgetBgColor');
+  if (savedColor) {
+    document.getElementById('widget').style.backgroundColor = savedColor;
+  }
 }
 
 function updateClock() {
@@ -251,6 +281,3 @@ function updateClock() {
   document.getElementById('date').textContent = `${weekdayString}, ${monthDayString}`;
 }
 
-updateClock();
-setInterval(updateClock, 1000);
-</script>
